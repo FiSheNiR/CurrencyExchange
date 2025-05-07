@@ -47,7 +47,7 @@ public class ExchangeRatesServlet extends HttpServlet {
         String targetCurrencyCode = req.getParameter("targetCurrencyCode");
         String rate = req.getParameter("rate");
 
-        ExchangeRateRequestDto exchangeRateRequestDto = new ExchangeRateRequestDto(baseCurrencyCode, targetCurrencyCode, convertToNumber(rate));
+        ExchangeRateRequestDto exchangeRateRequestDto = new ExchangeRateRequestDto(baseCurrencyCode, targetCurrencyCode, ValidationUtils.convertToNumber(rate));
 
         ValidationUtils.validateExchangeRateRequest(exchangeRateRequestDto);
 
@@ -57,12 +57,4 @@ public class ExchangeRatesServlet extends HttpServlet {
         objectMapper.writeValue(resp.getWriter(), convertToDto(exchangeRate));
     }
 
-    private static BigDecimal convertToNumber(String rate) {
-        try {
-            return BigDecimal.valueOf(Double.parseDouble(rate));
-        }
-        catch (NumberFormatException e) {
-            throw new InvalidParameterException("Parameter rate must be a number");
-        }
-    }
 }

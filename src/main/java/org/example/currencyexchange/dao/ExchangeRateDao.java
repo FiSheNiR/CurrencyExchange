@@ -12,6 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class ExchangeRateDao {
 
@@ -30,8 +31,30 @@ public class ExchangeRateDao {
             "  JOIN currency_exchange.currency_storage.currencies bc ON er.base_currency_id = bc.id" +
             "  JOIN currency_exchange.currency_storage.currencies tc ON er.target_currency_id = tc.id";
 
-    private final String SAVE_EXCHANGE_RATE_QUERY = "INSERT INTO currency_exchange.currency_storage.exchange_rates (base_currency_id, target_currency_id, rate) VALUES (?, ?, ?) RETURNING id";
+    private final String SAVE_EXCHANGE_RATE_QUERY = "INSERT INTO currency_exchange.currency_storage.exchange_rates (base_currency_id, target_currency_id, rate) " +
+            "VALUES (?, ?, ?) RETURNING id";
 
+    private final String FIND_EXCHANGE_RATE_BY_CODES = "SELECT" +
+            " er.id AS id," +
+            " bc.id AS base_id," +
+            " bc.code AS base_code," +
+            " bc.full_name AS base_name," +
+            " bc.sign AS base_sign," +
+            "    tc.id AS target_id," +
+            "    tc.code AS target_code," +
+            "    tc.full_name AS target_name," +
+            "    tc.sign AS target_sign," +
+            "    er.rate AS rate" +
+            "  FROM currency_exchange.currency_storage.exchange_rates er" +
+            "  JOIN currency_exchange.currency_storage.currencies bc ON er.base_currency_id = bc.id" +
+            "  JOIN currency_exchange.currency_storage.currencies tc ON er.target_currency_id = tc.id" +
+            " WHERE (base_currency_id = (SELECT base_currency.id FROM currency_exchange.currency_storage.currencies base_currency WHERE base_currency.code = ?)" +
+            "AND target_currency_id = (SELECT target_currency.id FROM currency_exchange.currency_storage.currencies target_currency WHERE target_currency.code = ?))";
+
+    private final String UPDATE_QUERY = "UPDATE currency_exchange.currency_storage.exchange_rates " +
+                    "SET rate = ? " +
+                    "WHERE base_currency_id = ? AND target_currency_id = ? " +
+                    "RETURNING id";
 
     public List<ExchangeRate> findAllExchangeRates() {
         try (Connection con = DataSource.getConnection();
@@ -78,6 +101,47 @@ public class ExchangeRateDao {
                     + exchangeRate.getBaseCurrency().getCode() + " to "
                     + exchangeRate.getTargetCurrency().getCode()+" to the database"
             + e.getMessage());
+        }
+    }
+
+    public Optional<ExchangeRate> findExchangeRateByCodes(String baseCurrencyCode, String targetCurrencyCode) {
+        try (Connection con = DataSource.getConnection();
+             PreparedStatement ps = con.prepareStatement(FIND_EXCHANGE_RATE_BY_CODES)) {
+
+            ps.setString(1, baseCurrencyCode);
+            ps.setString(2, targetCurrencyCode);
+            ResultSet resultSet = ps.executeQuery();
+            List<ExchangeRate> exchangeRates = new ArrayList<>();
+
+            if (!resultSet.next()) {
+                return Optional.empty();
+            }
+            return Optional.of(getExchangeRate(resultSet));
+
+        } catch (SQLException e){
+            throw new DatabaseOperationException("Failed to read Exchange rate with code " + baseCurrencyCode + targetCurrencyCode + " from the database ");
+        }
+    }
+
+    public Optional<ExchangeRate> update(ExchangeRate exchangeRate) {
+        try (Connection con = DataSource.getConnection();
+             PreparedStatement ps = con.prepareStatement(UPDATE_QUERY)) {
+
+            ps.setBigDecimal(1, exchangeRate.getRate());
+            ps.setLong(2, exchangeRate.getBaseCurrency().getId());
+            ps.setLong(3, exchangeRate.getTargetCurrency().getId());
+
+            ps.execute();
+            ResultSet resultSet = ps.getResultSet();
+
+            if (resultSet.next()) {
+                exchangeRate.setId(resultSet.getLong("id"));
+                return Optional.of(exchangeRate);
+            }
+            return Optional.empty();
+        }
+        catch (SQLException e) {
+            throw new DatabaseOperationException("Failed to update exchange rate with id '" + exchangeRate.getId() + "' in the database " + e.getMessage());
         }
     }
 

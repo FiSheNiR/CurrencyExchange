@@ -58,6 +58,17 @@ public class ValidationUtils {
         validateCurrencyCode(targetCurrencyCode);
     }
 
+    public static void validateExchangeRate(String code){
+        if (code.length() != 6) {
+            throw new InvalidParameterException("Exchange rate must be contain 6 symbols");
+        }
+
+        String baseCurrencyCode = code.substring(0, 3);
+        String targetCurrencyCode = code.substring(3, 6);
+        validateCurrencyCode(baseCurrencyCode);
+        validateCurrencyCode(targetCurrencyCode);
+    }
+
     public static void validateCurrencyCode(String code) {
 
         if (currencyCodes == null) {
@@ -69,6 +80,29 @@ public class ValidationUtils {
 
         if (!currencyCodes.contains(code)) {
             throw new InvalidParameterException("Currency code must be in ISO 4217 format");
+        }
+    }
+
+    public static BigDecimal validateRate(String parameter){
+        if (parameter == null || !parameter.contains("rate")) {
+            throw new InvalidParameterException("Missing parameter - rate");
+        }
+
+        String rate = parameter.replace("rate=", "");
+
+        if (rate.isBlank()) {
+            throw new InvalidParameterException("Missing parameter - rate");
+        }
+
+        return convertToNumber(rate);
+    }
+
+    public static BigDecimal convertToNumber(String rate) {
+        try {
+            return BigDecimal.valueOf(Double.parseDouble(rate));
+        }
+        catch (NumberFormatException e) {
+            throw new InvalidParameterException("Parameter rate must be a number " + e.getMessage());
         }
     }
 }
