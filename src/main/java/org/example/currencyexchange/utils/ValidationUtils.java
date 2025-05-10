@@ -2,6 +2,7 @@ package org.example.currencyexchange.utils;
 
 import org.example.currencyexchange.dto.CurrencyRequestDto;
 import org.example.currencyexchange.dto.ExchangeRateRequestDto;
+import org.example.currencyexchange.dto.ExchangeRequestDto;
 import org.example.currencyexchange.exeption.InvalidParameterException;
 
 import java.math.BigDecimal;
@@ -51,6 +52,31 @@ public class ValidationUtils {
         }
 
         if (rate.compareTo(BigDecimal.ZERO) < 0) {
+            throw new InvalidParameterException("Invalid parameter - rate cannot be negative");
+        }
+
+        validateCurrencyCode(baseCurrencyCode);
+        validateCurrencyCode(targetCurrencyCode);
+    }
+
+    public static void validateExchangeRequest(ExchangeRequestDto exchangeRequestDto) {
+        String baseCurrencyCode = exchangeRequestDto.getBaseCurrencyCode();
+        String targetCurrencyCode = exchangeRequestDto.getTargetCurrencyCode();
+        BigDecimal amount = exchangeRequestDto.getAmount();
+
+        if (baseCurrencyCode == null || baseCurrencyCode.isBlank()) {
+            throw new InvalidParameterException("Missing parameter - baseCurrencyCode");
+        }
+
+        if (targetCurrencyCode == null || targetCurrencyCode.isBlank()) {
+            throw new InvalidParameterException("Missing parameter - targetCurrencyCode");
+        }
+
+        if (amount == null) {
+            throw new InvalidParameterException("Missing parameter - rate");
+        }
+
+        if (amount.compareTo(BigDecimal.ZERO) < 0) {
             throw new InvalidParameterException("Invalid parameter - rate cannot be negative");
         }
 
