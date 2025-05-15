@@ -1,6 +1,7 @@
 $(document).ready(function() {
-    const host = "http://localhost:8080/CurrencyExchange_war_exploded"
+    const host = "http://176.109.106.117:8080/CurrencyExchange_war_exploded/"
 
+    //test from java
     // Fetch the list of currencies and populate the select element
     function requestCurrencies() {
         $.ajax({
@@ -145,6 +146,7 @@ $(document).ready(function() {
             data: `rate=${exchangeRate}`,
             success: function() {
 
+                requestExchangeRates()
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 const error = JSON.parse(jqXHR.responseText);
@@ -152,6 +154,8 @@ $(document).ready(function() {
 
                 $(toast).find('.toast-body').text(error.message);
                 toast.toast("show");
+
+                requestExchangeRates()
             }
         });
 
@@ -193,7 +197,8 @@ $(document).ready(function() {
             type: "GET",
             // data: "$("#add-exchange-rate").serialize()",
             success: function(data) {
-                $("#convert-converted-amount").val(data.convertedAmount);
+                const parsedData = JSON.parse(data);
+                $("#convert-converted-amount").val(parsedData.convertedAmount);
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 const error = JSON.parse(jqXHR.responseText);

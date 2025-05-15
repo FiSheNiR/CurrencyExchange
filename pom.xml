@@ -74,6 +74,7 @@
 
 
     <build>
+        <finalName>CurrencyExchange_war_exploded</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

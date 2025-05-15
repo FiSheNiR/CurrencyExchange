@@ -1,0 +1,25 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: currency_docker_compose
+    ports:
+      - "5432:5432"
+    volumes:
+      - ccb9251fafbd2fb2145fe67d3ccb79fadd605bc085701b4f4c3e53701790facf:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  # Tomcat с Java-приложением
+  tomcat:
+    image: tomcat:10.0
+    container_name: mytomcat
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./app:/usr/local/tomcat/webapps
+    depends_on:
+      - postgres
+    restart: unless-stopped
+
+volumes:
+  ccb9251fafbd2fb2145fe67d3ccb79fadd605bc085701b4f4c3e53701790facf:
+    external: true

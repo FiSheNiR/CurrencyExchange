@@ -29,7 +29,8 @@ public class ExchangeRateDao {
             "    er.rate AS rate" +
             "  FROM currency_exchange.currency_storage.exchange_rates er" +
             "  JOIN currency_exchange.currency_storage.currencies bc ON er.base_currency_id = bc.id" +
-            "  JOIN currency_exchange.currency_storage.currencies tc ON er.target_currency_id = tc.id";
+            "  JOIN currency_exchange.currency_storage.currencies tc ON er.target_currency_id = tc.id" +
+            " ORDER BY id";
 
     private final String SAVE_EXCHANGE_RATE_QUERY = "INSERT INTO currency_exchange.currency_storage.exchange_rates (base_currency_id, target_currency_id, rate) " +
             "VALUES (?, ?, ?) RETURNING id";
