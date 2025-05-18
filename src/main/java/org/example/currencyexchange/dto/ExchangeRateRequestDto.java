@@ -1,14 +1,11 @@
 package org.example.currencyexchange.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.example.currencyexchange.enitity.Currency;
 
 import java.math.BigDecimal;
 
-@Data
-@NoArgsConstructor
+@Getter
 @AllArgsConstructor
 public class ExchangeRateRequestDto {
 

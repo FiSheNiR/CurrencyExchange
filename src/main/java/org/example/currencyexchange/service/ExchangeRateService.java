@@ -3,12 +3,16 @@ package org.example.currencyexchange.service;
 import org.example.currencyexchange.dao.CurrencyDao;
 import org.example.currencyexchange.dao.ExchangeRateDao;
 import org.example.currencyexchange.dto.ExchangeRateRequestDto;
+import org.example.currencyexchange.dto.ExchangeRateResponseDto;
 import org.example.currencyexchange.enitity.Currency;
 import org.example.currencyexchange.enitity.ExchangeRate;
 import org.example.currencyexchange.exeption.NotFoundException;
+import org.example.currencyexchange.utils.MappingUtils;
 import org.example.currencyexchange.utils.ValidationUtils;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class ExchangeRateService {
 
@@ -50,5 +54,15 @@ public class ExchangeRateService {
                 .orElseThrow(() -> new NotFoundException(
                         "Failed to update exchange rate '" + baseCurrencyCode + "' - '" + targetCurrencyCode + "', no such exchange rate found")
                 );
+    }
+
+    public List<ExchangeRateResponseDto> getExchangeRates() {
+
+        List<ExchangeRate> exchangeRates = exchangeRateDao.findAllExchangeRates();
+
+        return exchangeRates.stream()
+                .map(MappingUtils::convertToDto)
+                .collect(Collectors.toList());
+
     }
 }

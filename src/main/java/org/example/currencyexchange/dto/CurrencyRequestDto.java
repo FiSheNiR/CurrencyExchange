@@ -1,12 +1,9 @@
 package org.example.currencyexchange.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
+@Getter
 @AllArgsConstructor
-@NoArgsConstructor
 public class CurrencyRequestDto {
 
     private String name;

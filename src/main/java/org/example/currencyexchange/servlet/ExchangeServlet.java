@@ -13,6 +13,7 @@ import org.example.currencyexchange.service.ExchangeService;
 import org.example.currencyexchange.utils.ValidationUtils;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 
 @WebServlet(name = "ExchangeServlet", urlPatterns = "/exchange")
 public class ExchangeServlet extends HttpServlet {
@@ -21,16 +22,26 @@ public class ExchangeServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String baseCurrencyCode = req.getParameter("from");
-        String targetCurrencyCode = req.getParameter("to");
-        String amount = req.getParameter("amount");
 
-        ExchangeRequestDto exchangeRequestDto = new ExchangeRequestDto(baseCurrencyCode, targetCurrencyCode, ValidationUtils.convertToNumber(amount));
-
-        ValidationUtils.validateExchangeRequest(exchangeRequestDto);
+        ExchangeRequestDto exchangeRequestDto = convertToExchangeRequestDto(req);
 
         ExchangeResponseDto exchangeResponseDto = exchangeService.exchange(exchangeRequestDto);
 
         objectMapper.writeValue(resp.getWriter(), exchangeResponseDto);
+    }
+
+    private ExchangeRequestDto convertToExchangeRequestDto(HttpServletRequest req) {
+
+        String baseCurrencyCode = req.getParameter("from");
+        String targetCurrencyCode = req.getParameter("to");
+        String amount = req.getParameter("amount");
+
+        BigDecimal currentAmount = ValidationUtils.convertToNumber(amount);
+
+        ExchangeRequestDto exchangeRequestDto = new ExchangeRequestDto(baseCurrencyCode, targetCurrencyCode, currentAmount);
+
+        ValidationUtils.validateExchangeRequest(exchangeRequestDto);
+
+        return exchangeRequestDto;
     }
 }

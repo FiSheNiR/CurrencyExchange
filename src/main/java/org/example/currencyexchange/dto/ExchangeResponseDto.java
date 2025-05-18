@@ -1,15 +1,11 @@
 package org.example.currencyexchange.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.example.currencyexchange.enitity.Currency;
+import lombok.*;
 
 import java.math.BigDecimal;
 
-@Data
+@Builder
 @AllArgsConstructor
-@NoArgsConstructor
 public class ExchangeResponseDto {
 
         private CurrencyResponseDto baseCurrency;

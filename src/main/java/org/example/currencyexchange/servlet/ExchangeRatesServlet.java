@@ -27,22 +27,29 @@ import static org.example.currencyexchange.utils.MappingUtils.convertToDto;
 public class ExchangeRatesServlet extends HttpServlet {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private final ExchangeRateDao exchangeRateDao = new ExchangeRateDao();
     private final ExchangeRateService exchangeRateService = new ExchangeRateService();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        List<ExchangeRate> exchangeRates = exchangeRateDao.findAllExchangeRates();
 
-        List<ExchangeRateResponseDto> exchangeRatesDto = exchangeRates.stream()
-                .map(MappingUtils::convertToDto)
-                .collect(Collectors.toList());
+        objectMapper.writeValue(resp.getWriter(), exchangeRateService.getExchangeRates());
 
-        objectMapper.writeValue(resp.getWriter(), exchangeRatesDto);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        ExchangeRateRequestDto exchangeRateRequestDto = convertRequestToDto(req);
+
+        ExchangeRate exchangeRate = exchangeRateService.save(exchangeRateRequestDto);
+
+        resp.setStatus(SC_CREATED);
+        objectMapper.writeValue(resp.getWriter(), convertToDto(exchangeRate));
+
+    }
+
+    private ExchangeRateRequestDto convertRequestToDto(HttpServletRequest req) {
+
         String baseCurrencyCode = req.getParameter("baseCurrencyCode");
         String targetCurrencyCode = req.getParameter("targetCurrencyCode");
         String rate = req.getParameter("rate");
@@ -51,10 +58,7 @@ public class ExchangeRatesServlet extends HttpServlet {
 
         ValidationUtils.validateExchangeRateRequest(exchangeRateRequestDto);
 
-        ExchangeRate exchangeRate = exchangeRateService.save(exchangeRateRequestDto);
-
-        resp.setStatus(SC_CREATED);
-        objectMapper.writeValue(resp.getWriter(), convertToDto(exchangeRate));
+        return exchangeRateRequestDto;
     }
 
 }

@@ -1,6 +1,7 @@
 package org.example.currencyexchange.service;
 
 import org.example.currencyexchange.dao.ExchangeRateDao;
+import org.example.currencyexchange.dto.ExchangeRateResponseDto;
 import org.example.currencyexchange.dto.ExchangeRequestDto;
 import org.example.currencyexchange.dto.ExchangeResponseDto;
 import org.example.currencyexchange.enitity.ExchangeRate;
@@ -24,16 +25,19 @@ public class ExchangeService {
                                 exchangeRequestDto.getBaseCurrencyCode(), exchangeRequestDto.getTargetCurrencyCode()))
                 );
 
-        BigDecimal amount = exchangeRequestDto.getAmount();
-        BigDecimal convertedAmount = amount.multiply(exchangeRate.getRate().setScale(1, RoundingMode.HALF_EVEN));
+        BigDecimal convertedAmount = convertAmountToDecimal(exchangeRequestDto.getAmount(), exchangeRate);
 
-        return new ExchangeResponseDto(
-                MappingUtils.convertToDto(exchangeRate.getBaseCurrency()),
-                MappingUtils.convertToDto(exchangeRate.getTargetCurrency()),
-                exchangeRate.getRate(),
-                exchangeRequestDto.getAmount(),
-                convertedAmount
-        );
+        return ExchangeResponseDto.builder()
+                .baseCurrency(MappingUtils.convertToDto(exchangeRate.getBaseCurrency()))
+                .targetCurrency(MappingUtils.convertToDto(exchangeRate.getTargetCurrency()))
+                .rate(exchangeRate.getRate())
+                .amount(exchangeRequestDto.getAmount())
+                .convertedAmount(convertedAmount)
+                .build();
+    }
+
+    private BigDecimal convertAmountToDecimal(BigDecimal amount, ExchangeRate exchangeRate) {
+        return amount.multiply(exchangeRate.getRate().setScale(1, RoundingMode.HALF_EVEN));
     }
 
     private Optional<ExchangeRate> findExchangeRate(ExchangeRequestDto exchangeRequestDto) {

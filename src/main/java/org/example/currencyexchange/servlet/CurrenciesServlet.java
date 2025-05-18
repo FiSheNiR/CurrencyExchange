@@ -39,17 +39,22 @@ public class CurrenciesServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String name = request.getParameter("name");
-        String code = request.getParameter("code");
-        String sign = request.getParameter("sign");
 
-        CurrencyRequestDto currencyRequestDto = new CurrencyRequestDto(name, code, sign);
-
-        ValidationUtils.validateCurrencyRequest(currencyRequestDto);
+        CurrencyRequestDto currencyRequestDto = convertToDto(request);
 
         Currency currency = currencyDao.saveCurrency(MappingUtils.convertDtoToEntity(currencyRequestDto));
 
         response.setStatus(SC_CREATED);
         objectMapper.writeValue(response.getWriter(), MappingUtils.convertToDto(currency));
+    }
+
+    private CurrencyRequestDto convertToDto(HttpServletRequest request) {
+        String name = request.getParameter("name");
+        String code = request.getParameter("code");
+        String sign = request.getParameter("sign");
+
+        CurrencyRequestDto currencyRequestDto = new CurrencyRequestDto(name, code, sign);
+        ValidationUtils.validateCurrencyRequest(currencyRequestDto);
+        return currencyRequestDto;
     }
 }

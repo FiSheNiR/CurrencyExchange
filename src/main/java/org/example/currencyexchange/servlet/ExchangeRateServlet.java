@@ -23,26 +23,37 @@ public class ExchangeRateServlet extends HttpServlet {
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
         if (req.getMethod().equalsIgnoreCase("PATCH")) {
             doPatch(req, resp);
         } else {
             super.service(req, resp);
         }
+
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+
         String code = req.getPathInfo().replaceAll("/","");
+
         ExchangeRate exchangeRate = exchangeRateService.getExchangeRateByCode(code);
+
         objectMapper.writeValue(resp.getWriter(), MappingUtils.convertToDto(exchangeRate));
+
     }
 
     protected void doPatch(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+
         String code = req.getPathInfo().replaceAll("/","");
         String rate = req.getReader().readLine();
+
         ValidationUtils.validateExchangeRate(code);
+
         ExchangeRateRequestDto exchangeRateRequestDto = new ExchangeRateRequestDto(code.substring(0,3), code.substring(3,6), ValidationUtils.validateRate(rate));
         ExchangeRate exchangeRate = exchangeRateService.update(exchangeRateRequestDto);
+
         objectMapper.writeValue(resp.getWriter(), MappingUtils.convertToDto(exchangeRate));
+
     }
 }
