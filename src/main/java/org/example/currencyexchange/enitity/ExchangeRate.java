@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class ExchangeRate {
     private Long id;
     private Currency baseCurrency;

@@ -28,7 +28,7 @@ public class CurrencyDao {
 
             return currencies;
         } catch (SQLException e){
-            throw new DatabaseOperationException("Failed to read currencies from the database");
+            throw new DatabaseOperationException("Failed to read currencies from the database " + e.getMessage());
         }
     }
 
@@ -44,7 +44,7 @@ public class CurrencyDao {
             return Optional.of(getCurrency(resultSet));
 
         } catch (SQLException e){
-            throw new DatabaseOperationException("Failed to read currency with code '" + code + "' from the database");
+            throw new DatabaseOperationException("Failed to read currency with code '" + code + "' from the database "+ e.getMessage());
         }
     }
 
@@ -60,7 +60,7 @@ public class CurrencyDao {
             ResultSet rs = ps.getGeneratedKeys();
 
             if (!rs.next()) {
-                throw new DatabaseOperationException("Failed to save currency with code '" + currency.getCode() + "' to the database");
+                throw new DatabaseOperationException("Failed to save currency with code '" + currency.getCode() + "' to the database ");
             }
 
             return getCurrency(rs);
@@ -68,7 +68,7 @@ public class CurrencyDao {
             if ("23505".equals(e.getSQLState())) {
                 throw new EntityExistsException("Currency with code '" + currency.getCode() + "' already exists");
             }
-            throw new DatabaseOperationException("Failed to save currency with code '" + currency.getCode() + "' to the database");
+            throw new DatabaseOperationException("Failed to save currency with code '" + currency.getCode() + "' to the database " + e.getMessage());
         }
     }
 

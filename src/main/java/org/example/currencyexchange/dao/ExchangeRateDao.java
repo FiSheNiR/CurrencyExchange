@@ -120,7 +120,7 @@ public class ExchangeRateDao {
             return Optional.of(getExchangeRate(resultSet));
 
         } catch (SQLException e){
-            throw new DatabaseOperationException("Failed to read Exchange rate with code " + baseCurrencyCode + targetCurrencyCode + " from the database ");
+            throw new DatabaseOperationException("Failed to read Exchange rate with code " + baseCurrencyCode + targetCurrencyCode + " from the database " + e.getMessage());
         }
     }
 

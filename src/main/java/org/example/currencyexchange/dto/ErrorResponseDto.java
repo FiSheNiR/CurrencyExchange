@@ -4,6 +4,7 @@ import lombok.*;
 
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
 public class ErrorResponseDto {
 
     private Integer code;

@@ -6,7 +6,9 @@ import org.example.currencyexchange.enitity.Currency;
 import java.math.BigDecimal;
 
 @Getter
+@Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class ExchangeRateResponseDto {
     private Long id;
     private Currency baseCurrency;

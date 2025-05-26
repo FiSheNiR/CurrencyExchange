@@ -5,7 +5,9 @@ import lombok.*;
 import java.math.BigDecimal;
 
 @Getter
+@Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class ExchangeRequestDto {
 
     private String baseCurrencyCode;
