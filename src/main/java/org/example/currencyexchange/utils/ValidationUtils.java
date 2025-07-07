@@ -51,8 +51,8 @@ public class ValidationUtils {
             throw new InvalidParameterException("Missing parameter - rate");
         }
 
-        if (rate.compareTo(BigDecimal.ZERO) < 0) {
-            throw new InvalidParameterException("Invalid parameter - rate cannot be negative");
+        if (rate.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new InvalidParameterException("Invalid parameter - rate cannot be negative or zero");
         }
 
         validateCurrencyCode(baseCurrencyCode);
@@ -76,8 +76,8 @@ public class ValidationUtils {
             throw new InvalidParameterException("Missing parameter - rate");
         }
 
-        if (amount.compareTo(BigDecimal.ZERO) < 0) {
-            throw new InvalidParameterException("Invalid parameter - rate cannot be negative");
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new InvalidParameterException("Invalid parameter - amount cannot be negative or zero");
         }
 
         validateCurrencyCode(baseCurrencyCode);
@@ -104,7 +104,7 @@ public class ValidationUtils {
                     .collect(Collectors.toSet());
         }
 
-        if (!currencyCodes.contains(code)) {
+        if (!currencyCodes.contains(code.trim())) {
             throw new InvalidParameterException("Currency code must be in ISO 4217 format");
         }
     }

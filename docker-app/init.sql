@@ -3,8 +3,8 @@ CREATE SCHEMA IF NOT EXISTS currency_storage;
 CREATE TABLE IF NOT EXISTS currency_storage.currencies(
                                                           id SERIAL PRIMARY KEY,
                                                           code VARCHAR(3) UNIQUE NOT NULL,
-                                                          full_name VARCHAR (128),
-                                                          sign VARCHAR(10)
+                                                          full_name VARCHAR (50),
+                                                          sign VARCHAR(5)
 );
 
 CREATE TABLE IF NOT EXISTS currency_storage.exchange_rates(
